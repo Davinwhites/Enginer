@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id       Int    @id @default(1)
+  username String @default("engineer")
+  password String @default("94840") // Note: In production use hashed passwords
+}
+
+model HomePage {
+  id          Int     @id @default(1)
+  heroTitle   String  @default("Professional Engineer")
+  heroSub     String  @default("Precision and Innovation in every plan.")
+  aboutShort  String  @default("Helping build the future with expert designs.")
+}
+
+model AboutPage {
+  id        Int     @id @default(1)
+  bio       String  @default("I am a dedicated engineer with years of experience...")
+  mission   String  @default("To provide high-quality engineering designs.")
+  experience String @default("10+ years in structural and civil engineering.")
+}
+
+model Resource {
+  id          Int     @id @default(autoincrement())
+  title       String
+  description String?
+  link        String?
+  createdAt   DateTime @default(now())
+}
+
+model Plan {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  imageUrl    String
+  createdAt   DateTime @default(now())
+}
+
+model Design {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  imageUrl    String
+  createdAt   DateTime @default(now())
+}
+
+model ContactInfo {
+  id       Int     @id @default(1)
+  email    String  @default("engineer@example.com")
+  phone    String  @default("+1234567890")
+  address  String  @default("123 Engineering St, City")
+  linkedin String? @default("linkedin.com/in/engineer")
+}
