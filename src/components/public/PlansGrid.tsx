@@ -34,7 +34,7 @@ export default function PlansGrid({ plans }: { plans: Plan[] }) {
                                     </div>
                                 </div>
                                 <div
-                                    className="absolute top-6 left-6 px-4 py-1.5 bg-gray-950/80 backdrop-blur-md rounded-full border border-white/10 flex items-center gap-2 z-10 hover:bg-blue-600 transition-colors"
+                                    className="absolute top-6 left-6 px-4 py-1.5 bg-gray-950/80 backdrop-blur-md rounded-full border border-white/10 flex items-center gap-2 z-30 cursor-pointer hover:bg-blue-600 transition-colors shadow-lg"
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         setSelectedPlan(plan);

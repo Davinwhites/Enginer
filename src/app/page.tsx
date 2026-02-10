@@ -33,16 +33,16 @@ export default async function HomePage() {
               {home?.heroSub || "Precision, Innovation, and Excellence in engineering designs."}
             </p>
 
-            <div className="flex flex-col sm:row justify-center gap-6">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
               <Link
                 href="/plans"
-                className="px-8 py-4 bg-white text-gray-900 font-bold rounded-xl hover:bg-blue-500 hover:text-white transition-all transform hover:scale-105 shadow-xl shadow-blue-500/10"
+                className="w-full sm:w-auto px-8 py-4 bg-white text-gray-900 font-bold rounded-xl hover:bg-blue-500 hover:text-white transition-all transform hover:scale-105 shadow-xl shadow-blue-500/10 text-center"
               >
                 View Plans
               </Link>
               <Link
                 href="/contact"
-                className="px-8 py-4 bg-gray-900 border border-gray-800 text-white font-bold rounded-xl hover:border-gray-600 transition-all flex items-center justify-center gap-2"
+                className="w-full sm:w-auto px-8 py-4 bg-gray-900 border border-gray-800 text-white font-bold rounded-xl hover:border-gray-600 transition-all flex items-center justify-center gap-2"
               >
                 Get in Touch <ArrowRight className="w-4 h-4" />
               </Link>
