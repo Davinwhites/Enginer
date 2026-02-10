@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Trash2, FileText, Layout } from "lucide-react";
+import { Plus, Trash2, FileText, Layout, PenTool } from "lucide-react";
 import BackButton from "@/components/admin/BackButton";
 
 interface Design {
@@ -15,6 +15,7 @@ export default function DesignsManager() {
     const [designs, setDesigns] = useState<Design[]>([]);
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({ title: "", description: "", imageUrl: "" });
+    const [editingDesign, setEditingDesign] = useState<Design | null>(null);
     const [uploading, setUploading] = useState(false);
     const [message, setMessage] = useState({ text: "", type: "" });
 
@@ -55,7 +56,7 @@ export default function DesignsManager() {
         }
     };
 
-    const handleAdd = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!formData.imageUrl) {
             setMessage({ text: "Please upload an image first", type: "error" });
@@ -65,24 +66,47 @@ export default function DesignsManager() {
         setMessage({ text: "", type: "" });
 
         try {
-            const res = await fetch("/api/admin/designs", {
-                method: "POST",
+            const url = "/api/admin/designs";
+            const method = editingDesign ? "PATCH" : "POST";
+            const body = editingDesign ? { ...formData, id: editingDesign.id } : formData;
+
+            const res = await fetch(url, {
+                method,
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData),
+                body: JSON.stringify(body),
             });
 
             if (res.ok) {
                 setFormData({ title: "", description: "", imageUrl: "" });
+                setEditingDesign(null);
                 fetchDesigns();
-                setMessage({ text: "Design published successfully!", type: "success" });
+                setMessage({
+                    text: editingDesign ? "Design updated successfully!" : "Design published successfully!",
+                    type: "success"
+                });
             } else {
-                setMessage({ text: "Failed to add design", type: "error" });
+                setMessage({ text: editingDesign ? "Failed to update design" : "Failed to add design", type: "error" });
             }
         } catch (err) {
             setMessage({ text: "Error occurred", type: "error" });
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleEdit = (design: Design) => {
+        setEditingDesign(design);
+        setFormData({
+            title: design.title,
+            description: design.description || "",
+            imageUrl: design.imageUrl,
+        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const handleCancel = () => {
+        setEditingDesign(null);
+        setFormData({ title: "", description: "", imageUrl: "" });
     };
 
     const handleDelete = async (id: number) => {
@@ -99,11 +123,22 @@ export default function DesignsManager() {
                 <p className="text-gray-400 mt-2">Share your architectural and structural concepts with high-quality visual renders.</p>
             </div>
 
-            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 shadow-sm">
-                <h2 className="text-lg font-bold mb-4 flex items-center gap-2 text-emerald-400">
-                    <Plus className="w-5 h-5" /> Add New Design
-                </h2>
-                <form onSubmit={handleAdd} className="space-y-6">
+            <div className={`bg-gray-900 border transition-all rounded-2xl p-6 shadow-sm ${editingDesign ? 'border-orange-500/50 bg-orange-500/5' : 'border-gray-800'}`}>
+                <div className="flex items-center justify-between mb-4">
+                    <h2 className={`text-lg font-bold flex items-center gap-2 ${editingDesign ? 'text-orange-400' : 'text-emerald-400'}`}>
+                        {editingDesign ? <PenTool className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
+                        {editingDesign ? 'Edit Conceptual Design' : 'Add New Design'}
+                    </h2>
+                    {editingDesign && (
+                        <button
+                            onClick={handleCancel}
+                            className="text-xs font-bold uppercase tracking-widest text-gray-500 hover:text-white transition-colors"
+                        >
+                            Cancel Edit
+                        </button>
+                    )}
+                </div>
+                <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-4">
                             <div>
@@ -163,11 +198,15 @@ export default function DesignsManager() {
                     <button
                         type="submit"
                         disabled={loading || uploading}
-                        className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold py-4 rounded-xl shadow-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                        className={`w-full font-bold py-4 rounded-xl shadow-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2 ${editingDesign
+                            ? 'bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white'
+                            : 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white'
+                            }`}
                     >
-                        {loading ? "Publishing..." : (
+                        {loading ? "Saving..." : (
                             <>
-                                <Plus className="w-5 h-5" /> Publish Design
+                                {editingDesign ? <PenTool className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
+                                {editingDesign ? "Update Design Details" : "Publish Design"}
                             </>
                         )}
                     </button>
@@ -184,10 +223,18 @@ export default function DesignsManager() {
                     <div key={design.id} className="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden group">
                         <div className="aspect-video bg-gray-800 relative overflow-hidden">
                             <img src={design.imageUrl} alt={design.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                            <div className="absolute inset-0 bg-gradient-to-t from-gray-950/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                            <div className="absolute top-4 right-4 flex gap-2">
+                                <button
+                                    onClick={() => handleEdit(design)}
+                                    className="p-2 bg-blue-500/90 hover:bg-blue-600 text-white rounded-lg shadow-xl"
+                                    title="Edit Design"
+                                >
+                                    <PenTool className="w-4 h-4" />
+                                </button>
                                 <button
                                     onClick={() => handleDelete(design.id)}
-                                    className="p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg shadow-xl"
+                                    className="p-2 bg-red-500/90 hover:bg-red-600 text-white rounded-lg shadow-xl"
+                                    title="Delete Design"
                                 >
                                     <Trash2 className="w-4 h-4" />
                                 </button>

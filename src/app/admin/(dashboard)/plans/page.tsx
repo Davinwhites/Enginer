@@ -15,6 +15,7 @@ export default function PlansManager() {
     const [plans, setPlans] = useState<Plan[]>([]);
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({ title: "", description: "", imageUrl: "" });
+    const [editingPlan, setEditingPlan] = useState<Plan | null>(null);
     const [uploading, setUploading] = useState(false);
     const [message, setMessage] = useState({ text: "", type: "" });
 
@@ -55,7 +56,7 @@ export default function PlansManager() {
         }
     };
 
-    const handleAdd = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!formData.imageUrl) {
             setMessage({ text: "Please upload an image first", type: "error" });
@@ -65,24 +66,47 @@ export default function PlansManager() {
         setMessage({ text: "", type: "" });
 
         try {
-            const res = await fetch("/api/admin/plans", {
-                method: "POST",
+            const url = "/api/admin/plans";
+            const method = editingPlan ? "PATCH" : "POST";
+            const body = editingPlan ? { ...formData, id: editingPlan.id } : formData;
+
+            const res = await fetch(url, {
+                method,
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData),
+                body: JSON.stringify(body),
             });
 
             if (res.ok) {
                 setFormData({ title: "", description: "", imageUrl: "" });
+                setEditingPlan(null);
                 fetchPlans();
-                setMessage({ text: "Plan published successfully!", type: "success" });
+                setMessage({
+                    text: editingPlan ? "Plan updated successfully!" : "Plan published successfully!",
+                    type: "success"
+                });
             } else {
-                setMessage({ text: "Failed to add plan", type: "error" });
+                setMessage({ text: editingPlan ? "Failed to update plan" : "Failed to add plan", type: "error" });
             }
         } catch (err) {
             setMessage({ text: "Error occurred", type: "error" });
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleEdit = (plan: Plan) => {
+        setEditingPlan(plan);
+        setFormData({
+            title: plan.title,
+            description: plan.description || "",
+            imageUrl: plan.imageUrl,
+        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const handleCancel = () => {
+        setEditingPlan(null);
+        setFormData({ title: "", description: "", imageUrl: "" });
     };
 
     const handleDelete = async (id: number) => {
@@ -99,11 +123,22 @@ export default function PlansManager() {
                 <p className="text-gray-400 mt-2">Upload and manage your engineered drawings and blueprints.</p>
             </div>
 
-            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 shadow-sm">
-                <h2 className="text-lg font-bold mb-4 flex items-center gap-2 text-blue-400">
-                    <Plus className="w-5 h-5" /> Add New Plan
-                </h2>
-                <form onSubmit={handleAdd} className="space-y-6">
+            <div className={`bg-gray-900 border transition-all rounded-2xl p-6 shadow-sm ${editingPlan ? 'border-orange-500/50 bg-orange-500/5' : 'border-gray-800'}`}>
+                <div className="flex items-center justify-between mb-4">
+                    <h2 className={`text-lg font-bold flex items-center gap-2 ${editingPlan ? 'text-orange-400' : 'text-blue-400'}`}>
+                        {editingPlan ? <PenTool className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
+                        {editingPlan ? 'Edit Project Plan' : 'Add New Plan'}
+                    </h2>
+                    {editingPlan && (
+                        <button
+                            onClick={handleCancel}
+                            className="text-xs font-bold uppercase tracking-widest text-gray-500 hover:text-white transition-colors"
+                        >
+                            Cancel Edit
+                        </button>
+                    )}
+                </div>
+                <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-4">
                             <div>
@@ -163,11 +198,15 @@ export default function PlansManager() {
                     <button
                         type="submit"
                         disabled={loading || uploading}
-                        className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-4 rounded-xl shadow-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                        className={`w-full font-bold py-4 rounded-xl shadow-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2 ${editingPlan
+                                ? 'bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white'
+                                : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white'
+                            }`}
                     >
-                        {loading ? "Publishing..." : (
+                        {loading ? "Saving..." : (
                             <>
-                                <Plus className="w-5 h-5" /> Publish New Plan
+                                {editingPlan ? <PenTool className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
+                                {editingPlan ? "Update Plan Details" : "Publish New Plan"}
                             </>
                         )}
                     </button>
@@ -190,12 +229,22 @@ export default function PlansManager() {
                                     <ImageIcon className="w-12 h-12" />
                                 </div>
                             )}
-                            <button
-                                onClick={() => handleDelete(plan.id)}
-                                className="absolute top-4 right-4 p-2 bg-red-500/80 hover:bg-red-600 text-white rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-all"
-                            >
-                                <Trash2 className="w-4 h-4" />
-                            </button>
+                            <div className="absolute top-4 right-4 flex gap-2">
+                                <button
+                                    onClick={() => handleEdit(plan)}
+                                    className="p-2 bg-blue-500/90 hover:bg-blue-600 text-white rounded-lg shadow-lg transition-all"
+                                    title="Edit Plan"
+                                >
+                                    <PenTool className="w-4 h-4" />
+                                </button>
+                                <button
+                                    onClick={() => handleDelete(plan.id)}
+                                    className="p-2 bg-red-500/90 hover:bg-red-600 text-white rounded-lg shadow-lg transition-all"
+                                    title="Delete Plan"
+                                >
+                                    <Trash2 className="w-4 h-4" />
+                                </button>
+                            </div>
                         </div>
                         <div className="p-5">
                             <div className="flex items-center gap-2 mb-2">

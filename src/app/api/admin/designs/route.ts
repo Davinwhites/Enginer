@@ -34,6 +34,30 @@ export async function POST(req: NextRequest) {
     }
 }
 
+export async function PATCH(req: NextRequest) {
+    const session = await getIronSession<SessionData>(await cookies(), sessionOptions);
+    if (!session.isLoggedIn) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+
+    try {
+        const data = await req.json();
+        const { id, title, description, imageUrl } = data;
+
+        if (!id) return NextResponse.json({ message: "ID required" }, { status: 400 });
+
+        const design = await prisma.design.update({
+            where: { id: parseInt(id) },
+            data: {
+                title,
+                description,
+                imageUrl,
+            },
+        });
+        return NextResponse.json(design);
+    } catch (error) {
+        return NextResponse.json({ message: "Failed to update design" }, { status: 500 });
+    }
+}
+
 export async function DELETE(req: NextRequest) {
     const session = await getIronSession<SessionData>(await cookies(), sessionOptions);
     if (!session.isLoggedIn) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
