@@ -223,20 +223,18 @@ export default function DesignsManager() {
                     <div key={design.id} className="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden group">
                         <div className="aspect-video bg-gray-800 relative overflow-hidden">
                             <img src={design.imageUrl} alt={design.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                            <div className="absolute top-4 right-4 flex gap-2">
+                            <div className="absolute top-4 right-4 flex flex-col gap-2">
                                 <button
                                     onClick={() => handleEdit(design)}
-                                    className="p-2 bg-blue-500/90 hover:bg-blue-600 text-white rounded-lg shadow-xl"
-                                    title="Edit Design"
+                                    className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-xl flex items-center gap-2 text-xs font-bold transition-all transform hover:scale-105"
                                 >
-                                    <PenTool className="w-4 h-4" />
+                                    <PenTool className="w-4 h-4" /> Edit Design
                                 </button>
                                 <button
                                     onClick={() => handleDelete(design.id)}
-                                    className="p-2 bg-red-500/90 hover:bg-red-600 text-white rounded-lg shadow-xl"
-                                    title="Delete Design"
+                                    className="px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow-xl flex items-center gap-2 text-xs font-bold transition-all transform hover:scale-105"
                                 >
-                                    <Trash2 className="w-4 h-4" />
+                                    <Trash2 className="w-4 h-4" /> Delete Project
                                 </button>
                             </div>
                         </div>

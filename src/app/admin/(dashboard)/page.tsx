@@ -13,12 +13,17 @@ export default async function DashboardPage() {
     const plansCount = await prisma.plan.count();
     const designsCount = await prisma.design.count();
     const resourcesCount = await prisma.resource.count();
+    const totalViews = await prisma.pageView.count();
+    const recentLogins = await prisma.adminLog.findMany({
+        orderBy: { timestamp: 'desc' },
+        take: 5
+    });
 
     const stats = [
         { label: "Drawn Plans", value: plansCount, icon: PenTool, color: "text-blue-400" },
         { label: "New Designs", value: designsCount, icon: FileText, color: "text-emerald-400" },
         { label: "Resources", value: resourcesCount, icon: Boxes, color: "text-amber-400" },
-        { label: "Total Views", value: "1,234", icon: TrendingUp, color: "text-purple-400" },
+        { label: "Total Views", value: totalViews.toLocaleString(), icon: TrendingUp, color: "text-purple-400" },
     ];
 
     return (
@@ -64,22 +69,24 @@ export default async function DashboardPage() {
                 </div>
 
                 <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl">
-                    <h3 className="text-xl font-bold mb-4">Status</h3>
+                    <h3 className="text-xl font-bold mb-4">Recent Admin Activity</h3>
                     <div className="space-y-4">
-                        <div className="flex items-center justify-between text-sm">
-                            <span className="text-gray-400">Database Connection</span>
-                            <span className="text-emerald-400 flex items-center gap-1">
-                                <div className="w-2 h-2 bg-emerald-400 rounded-full" /> Stable
-                            </span>
-                        </div>
-                        <div className="flex items-center justify-between text-sm">
-                            <span className="text-gray-400">Environment</span>
-                            <span className="text-gray-200">Production Mode</span>
-                        </div>
-                        <div className="flex items-center justify-between text-sm">
-                            <span className="text-gray-400">Last Content Update</span>
-                            <span className="text-gray-200">Never</span>
-                        </div>
+                        {recentLogins.length > 0 ? (
+                            recentLogins.map((log) => (
+                                <div key={log.id} className="flex items-center justify-between text-sm py-2 border-b border-gray-800 last:border-0">
+                                    <div className="flex flex-col">
+                                        <span className="font-bold text-gray-200">{log.action}</span>
+                                        <span className="text-[10px] text-gray-500">{new Date(log.timestamp).toLocaleString()}</span>
+                                    </div>
+                                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${log.status === "Success" ? "bg-emerald-500/10 text-emerald-400" : "bg-red-500/10 text-red-400"
+                                        }`}>
+                                        {log.status}
+                                    </span>
+                                </div>
+                            ))
+                        ) : (
+                            <p className="text-gray-500 text-sm italic">No recent activity recorded.</p>
+                        )}
                     </div>
                 </div>
             </div>

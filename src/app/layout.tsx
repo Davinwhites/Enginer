@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import TrafficTracker from "@/components/public/TrafficTracker";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Professional Engineer | Expert Solutions",
-  description: "Dynamic website for a professional engineer showcasing plans, designs, and resources.",
+  title: "Engineer Portfolio | Professional Engineering Designs",
+  description: "Showcase of professional engineering plans, blueprints, and architectural designs.",
 };
 
 export default function RootLayout({
@@ -16,7 +17,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className={`${inter.className} bg-gray-950 text-gray-100 antialiased`}>
+      <body className={`${inter.className} bg-gray-950 text-gray-100 flex flex-col min-h-screen selection:bg-blue-500/30 selection:text-blue-200`}>
+        <TrafficTracker />
         {children}
       </body>
     </html>

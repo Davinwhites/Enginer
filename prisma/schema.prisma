@@ -51,6 +51,19 @@ model Design {
   createdAt   DateTime @default(now())
 }
 
+model PageView {
+  id        Int      @id @default(autoincrement())
+  path      String
+  timestamp DateTime @default(now())
+}
+
+model AdminLog {
+  id        Int      @id @default(autoincrement())
+  action    String
+  status    String
+  timestamp DateTime @default(now())
+}
+
 model ContactInfo {
   id       Int     @id @default(1)
   email    String  @default("engineer@example.com")

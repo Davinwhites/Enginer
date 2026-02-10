@@ -199,8 +199,8 @@ export default function PlansManager() {
                         type="submit"
                         disabled={loading || uploading}
                         className={`w-full font-bold py-4 rounded-xl shadow-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2 ${editingPlan
-                                ? 'bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white'
-                                : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white'
+                            ? 'bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white'
+                            : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white'
                             }`}
                     >
                         {loading ? "Saving..." : (
@@ -229,20 +229,18 @@ export default function PlansManager() {
                                     <ImageIcon className="w-12 h-12" />
                                 </div>
                             )}
-                            <div className="absolute top-4 right-4 flex gap-2">
+                            <div className="absolute top-4 right-4 flex flex-col gap-2">
                                 <button
                                     onClick={() => handleEdit(plan)}
-                                    className="p-2 bg-blue-500/90 hover:bg-blue-600 text-white rounded-lg shadow-lg transition-all"
-                                    title="Edit Plan"
+                                    className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-xl flex items-center gap-2 text-xs font-bold transition-all transform hover:scale-105"
                                 >
-                                    <PenTool className="w-4 h-4" />
+                                    <PenTool className="w-4 h-4" /> Edit Plan
                                 </button>
                                 <button
                                     onClick={() => handleDelete(plan.id)}
-                                    className="p-2 bg-red-500/90 hover:bg-red-600 text-white rounded-lg shadow-lg transition-all"
-                                    title="Delete Plan"
+                                    className="px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow-xl flex items-center gap-2 text-xs font-bold transition-all transform hover:scale-105"
                                 >
-                                    <Trash2 className="w-4 h-4" />
+                                    <Trash2 className="w-4 h-4" /> Delete Project
                                 </button>
                             </div>
                         </div>

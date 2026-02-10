@@ -92,13 +92,27 @@ export async function POST(req: NextRequest) {
             session.user = { id: admin.id, username: admin.username };
             await session.save();
 
+            // Log successful login
+            await prisma.adminLog.create({
+                data: { action: "Login", status: "Success" }
+            });
+
             console.log(`Login successful for user: ${username}`);
             return NextResponse.json({ success: true });
         }
 
+        // Log failed login
+        await prisma.adminLog.create({
+            data: { action: "Login", status: "Failed (Invalid Credentials)" }
+        });
+
         console.log(`Login failed for user: ${username} (Invalid credentials)`);
         return NextResponse.json({ message: "Invalid credentials" }, { status: 401 });
     } catch (error) {
+        // Log system error login
+        await prisma.adminLog.create({
+            data: { action: "Login", status: "Error (System Failure)" }
+        });
         console.error("Login error:", error);
         return NextResponse.json({ message: "Internal server error" }, { status: 500 });
     }
