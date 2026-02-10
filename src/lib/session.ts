@@ -13,5 +13,8 @@ export const sessionOptions: SessionOptions = {
     cookieName: "engineer_session",
     cookieOptions: {
         secure: process.env.NODE_ENV === "production",
+        httpOnly: true,
+        path: "/",
+        sameSite: "lax",
     },
 };

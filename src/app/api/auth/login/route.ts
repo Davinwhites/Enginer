@@ -13,14 +13,20 @@ export async function POST(req: NextRequest) {
         // Check if admin exists, if not create with defaults
         let admin = await prisma.admin.findUnique({ where: { id: 1 } });
         if (!admin) {
+            console.log("No admin found, creating default admin...");
             const hashedPassword = await bcrypt.hash("94840", 10);
-            admin = await prisma.admin.create({
-                data: {
-                    id: 1,
-                    username: "engineer",
-                    password: hashedPassword,
-                },
-            });
+            try {
+                admin = await prisma.admin.create({
+                    data: {
+                        id: 1,
+                        username: "engineer",
+                        password: hashedPassword,
+                    },
+                });
+            } catch (e) {
+                // Handle race condition if multiple requests hit this at once
+                admin = await prisma.admin.findUnique({ where: { id: 1 } });
+            }
         }
 
         // Seeding other tables if empty
@@ -60,6 +66,10 @@ export async function POST(req: NextRequest) {
             });
         }
 
+        if (!admin) {
+            return NextResponse.json({ message: "Admin initialization failed" }, { status: 500 });
+        }
+
         let isPasswordCorrect = false;
         if (admin.password.startsWith("$2a$") || admin.password.startsWith("$2b$")) {
             isPasswordCorrect = await bcrypt.compare(password, admin.password);
@@ -82,9 +92,11 @@ export async function POST(req: NextRequest) {
             session.user = { id: admin.id, username: admin.username };
             await session.save();
 
+            console.log(`Login successful for user: ${username}`);
             return NextResponse.json({ success: true });
         }
 
+        console.log(`Login failed for user: ${username} (Invalid credentials)`);
         return NextResponse.json({ message: "Invalid credentials" }, { status: 401 });
     } catch (error) {
         console.error("Login error:", error);
