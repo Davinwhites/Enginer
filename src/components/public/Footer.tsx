@@ -32,7 +32,6 @@ export default async function Footer() {
                     <h4 className="text-white font-bold mb-6 uppercase text-xs tracking-widest">Resources</h4>
                     <ul className="space-y-3 text-sm text-gray-400">
                         <li><Link href="/resources" className="hover:text-blue-400 transition-colors">Technical Docs</Link></li>
-                        <li><Link href="/contact" className="hover:text-blue-400 transition-colors">Get Quotation</Link></li>
                         <li><Link href="/admin/login" className="hover:text-blue-400 transition-colors">Admin Access</Link></li>
                     </ul>
                 </div>
