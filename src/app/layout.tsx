@@ -16,7 +16,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en" className="scroll-smooth" translate="no">
+      <head>
+        <meta name="google" content="notranslate" />
+      </head>
       <body className={`${inter.className} bg-gray-950 text-gray-100 flex flex-col min-h-screen selection:bg-blue-500/30 selection:text-blue-200`}>
         <TrafficTracker />
         {children}
