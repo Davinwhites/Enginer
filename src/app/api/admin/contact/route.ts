@@ -6,8 +6,7 @@ import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(req: NextRequest) {
-    const session = await getIronSession<SessionData>(await cookies(), sessionOptions);
-    if (!session.isLoggedIn) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    // Publicly accessible for the contact page
 
     let contact = await prisma.contactInfo.findUnique({ where: { id: 1 } });
     if (!contact) {
