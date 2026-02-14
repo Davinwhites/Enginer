@@ -48,7 +48,7 @@ export default function PlansManager() {
                 const isVideo = file.type.startsWith('video/');
                 setMessage({ text: `${isVideo ? 'Video' : 'Image'} uploaded successfully!`, type: "success" });
             } else {
-                setMessage({ text: result.message || "Upload failed", type: "error" });
+                setMessage({ text: result.details ? `Upload failed: ${result.details}` : result.message || "Upload failed", type: "error" });
             }
         } catch (err) {
             setMessage({ text: "Error uploading file", type: "error" });
