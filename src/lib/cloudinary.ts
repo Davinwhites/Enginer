@@ -1,15 +1,18 @@
 import { v2 as cloudinary } from 'cloudinary';
 
-if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
-    console.warn("Cloudinary environment variables are missing! Uploads will fail.");
+if (process.env.CLOUDINARY_URL) {
+    // Use the connection string if available
+    cloudinary.config({
+        secure: true,
+    });
+} else {
+    cloudinary.config({
+        cloud_name: (process.env.CLOUDINARY_CLOUD_NAME || "").trim(),
+        api_key: (process.env.CLOUDINARY_API_KEY || "").trim(),
+        api_secret: (process.env.CLOUDINARY_API_SECRET || "").trim(),
+        secure: true,
+    });
 }
-
-cloudinary.config({
-    cloud_name: (process.env.CLOUDINARY_CLOUD_NAME || "").trim(),
-    api_key: (process.env.CLOUDINARY_API_KEY || "").trim(),
-    api_secret: (process.env.CLOUDINARY_API_SECRET || "").trim(),
-    secure: true,
-});
 
 export default cloudinary;
 
@@ -24,7 +27,7 @@ export async function uploadToCloudinary(
                 folder,
                 resource_type: 'auto',
             },
-            (error, result) => {
+            (error: any, result: any) => {
                 if (error) {
                     console.error('Cloudinary upload error:', error);
                     return reject(error);
