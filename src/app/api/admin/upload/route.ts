@@ -11,22 +11,32 @@ export async function POST(req: NextRequest) {
     if (!session.isLoggedIn) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
     try {
+        if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+            return NextResponse.json({
+                message: "Server Configuration Error",
+                details: "Cloudinary environment variables are missing on the server. Please add them to Render environments."
+            }, { status: 500 });
+        }
+
         const formData = await req.formData();
         const file = formData.get("file") as File;
 
         if (!file) {
-            return NextResponse.json({ message: "No file uploaded" }, { status: 400 });
+            return NextResponse.json({
+                message: "No file selected",
+                details: "The request reached the server but no file was found in the form data."
+            }, { status: 400 });
         }
 
-        console.log(`Starting upload: ${file.name} (${file.type}), Size: ${(file.size / 1024 / 1024).toFixed(2)}MB`);
+        console.log(`Processing upload: ${file.name}, Type: ${file.type}, Size: ${file.size}`);
 
         const bytes = await file.arrayBuffer();
         const buffer = Buffer.from(bytes);
 
         // Upload to Cloudinary
-        const { url } = await uploadToCloudinary(buffer, file.name);
+        const result = await uploadToCloudinary(buffer, file.name);
 
-        return NextResponse.json({ url });
+        return NextResponse.json({ url: result.url });
     } catch (error: any) {
         console.error("Detailed upload error:", error);
         return NextResponse.json({
