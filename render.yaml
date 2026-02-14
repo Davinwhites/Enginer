@@ -10,7 +10,7 @@ services:
     env: node
     plan: free # or starter, standard, etc.
     buildCommand: npm install && npm run build
-    startCommand: npm run db:push -- --accept-data-loss && npm start
+    startCommand: npx prisma db push --accept-data-loss && npm start
     envVars:
       - key: DATABASE_URL
         fromDatabase:
