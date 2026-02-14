@@ -5,7 +5,7 @@ import Footer from "@/components/public/Footer";
 import { Download, ExternalLink, FileText } from "lucide-react";
 
 export default async function ResourcesPage() {
-    let resources = [];
+    let resources: any[] = [];
     try {
         resources = await prisma.resource.findMany({
             orderBy: { createdAt: 'desc' }

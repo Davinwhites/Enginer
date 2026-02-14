@@ -5,7 +5,7 @@ import Footer from "@/components/public/Footer";
 import { Layout, ArrowUpRight } from "lucide-react";
 
 export default async function DesignsPage() {
-    let designs = [];
+    let designs: any[] = [];
     try {
         designs = await prisma.design.findMany({
             orderBy: { createdAt: 'desc' }
