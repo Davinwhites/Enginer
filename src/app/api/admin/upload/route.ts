@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import { join } from "path";
 import { getIronSession } from "iron-session";
 import { sessionOptions, SessionData } from "@/lib/session";
 import { cookies } from "next/headers";
-import { existsSync } from "fs";
+import { uploadToCloudinary } from "@/lib/cloudinary";
 
 export const dynamic = "force-dynamic";
 
@@ -23,9 +21,8 @@ export async function POST(req: NextRequest) {
         const bytes = await file.arrayBuffer();
         const buffer = Buffer.from(bytes);
 
-        // Convert to Base64
-        const base64 = buffer.toString('base64');
-        const url = `data:${file.type};base64,${base64}`;
+        // Upload to Cloudinary
+        const { url } = await uploadToCloudinary(buffer, file.name);
 
         return NextResponse.json({ url });
     } catch (error) {

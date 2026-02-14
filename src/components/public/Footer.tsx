@@ -3,7 +3,12 @@ import { Mail, Phone, MapPin, Linkedin, Github } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 
 export default async function Footer() {
-    const contact = await prisma.contactInfo.findUnique({ where: { id: 1 } });
+    let contact = null;
+    try {
+        contact = await prisma.contactInfo.findUnique({ where: { id: 1 } });
+    } catch (error) {
+        console.warn("Footer: Failed to fetch contact info during build or runtime", error);
+    }
 
     return (
         <footer className="bg-gray-950 border-t border-gray-900 pt-16 pb-8">

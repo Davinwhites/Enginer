@@ -45,7 +45,8 @@ export default function PlansManager() {
             const result = await res.json();
             if (res.ok) {
                 setFormData({ ...formData, imageUrl: result.url });
-                setMessage({ text: "Image uploaded successfully!", type: "success" });
+                const isVideo = file.type.startsWith('video/');
+                setMessage({ text: `${isVideo ? 'Video' : 'Image'} uploaded successfully!`, type: "success" });
             } else {
                 setMessage({ text: result.message || "Upload failed", type: "error" });
             }
@@ -168,11 +169,15 @@ export default function PlansManager() {
                             <div className="relative group aspect-video bg-gray-950 border-2 border-dashed border-gray-800 rounded-2xl flex flex-col items-center justify-center overflow-hidden transition-all hover:border-blue-500/50">
                                 {formData.imageUrl ? (
                                     <>
-                                        <img src={formData.imageUrl} alt="Preview" className="w-full h-full object-cover" />
-                                        <div className="absolute inset-0 bg-gray-950/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                                        {formData.imageUrl.match(/\.(mp4|webm|ogg|mov)$/) || formData.imageUrl.includes('video/upload') ? (
+                                            <video src={formData.imageUrl} className="w-full h-full object-cover" controls />
+                                        ) : (
+                                            <img src={formData.imageUrl} alt="Preview" className="w-full h-full object-cover" />
+                                        )}
+                                        <div className="absolute inset-0 bg-gray-950/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity pointer-events-none group-hover:pointer-events-auto">
                                             <label className="cursor-pointer bg-white text-black px-4 py-2 rounded-lg font-bold text-sm">
-                                                Change Image
-                                                <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
+                                                Change Media
+                                                <input type="file" className="hidden" accept="image/*,video/*" onChange={handleFileChange} />
                                             </label>
                                         </div>
                                     </>
@@ -186,9 +191,9 @@ export default function PlansManager() {
                                             )}
                                         </div>
                                         <p className="text-sm text-gray-500">
-                                            {uploading ? "Uploading..." : "Click to upload drawing"}
+                                            {uploading ? "Uploading..." : "Click to upload drawing or video"}
                                         </p>
-                                        <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" accept="image/*" onChange={handleFileChange} />
+                                        <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" accept="image/*,video/*" onChange={handleFileChange} />
                                     </>
                                 )}
                             </div>
@@ -223,7 +228,11 @@ export default function PlansManager() {
                     <div key={plan.id} className="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden group border border-gray-800 hover:border-blue-500/50 transition-all">
                         <div className="h-48 bg-gray-800 relative overflow-hidden">
                             {plan.imageUrl ? (
-                                <img src={plan.imageUrl} alt={plan.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                plan.imageUrl.match(/\.(mp4|webm|ogg|mov)$/) || plan.imageUrl.includes('video/upload') ? (
+                                    <video src={plan.imageUrl} className="w-full h-full object-cover" controls />
+                                ) : (
+                                    <img src={plan.imageUrl} alt={plan.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                )
                             ) : (
                                 <div className="w-full h-full flex items-center justify-center text-gray-600">
                                     <ImageIcon className="w-12 h-12" />
