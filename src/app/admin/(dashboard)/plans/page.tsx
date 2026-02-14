@@ -169,7 +169,7 @@ export default function PlansManager() {
                             <div className="relative group aspect-video bg-gray-950 border-2 border-dashed border-gray-800 rounded-2xl flex flex-col items-center justify-center overflow-hidden transition-all hover:border-blue-500/50">
                                 {formData.imageUrl ? (
                                     <>
-                                        {formData.imageUrl.match(/\.(mp4|webm|ogg|mov)$/) || formData.imageUrl.includes('video/upload') ? (
+                                        {formData.imageUrl?.match(/\.(mp4|webm|ogg|mov)$/) || formData.imageUrl?.includes('video/upload') ? (
                                             <video src={formData.imageUrl} className="w-full h-full object-cover" controls />
                                         ) : (
                                             <img src={formData.imageUrl} alt="Preview" className="w-full h-full object-cover" />

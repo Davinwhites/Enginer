@@ -169,7 +169,7 @@ export default function DesignsManager() {
                             <div className="relative group aspect-video bg-gray-950 border-2 border-dashed border-gray-800 rounded-2xl flex flex-col items-center justify-center overflow-hidden transition-all hover:border-emerald-500/50">
                                 {formData.imageUrl ? (
                                     <>
-                                        {formData.imageUrl.match(/\.(mp4|webm|ogg|mov)$/) || formData.imageUrl.includes('video/upload') ? (
+                                        {formData.imageUrl?.match(/\.(mp4|webm|ogg|mov)$/) || formData.imageUrl?.includes('video/upload') ? (
                                             <video src={formData.imageUrl} className="w-full h-full object-cover" controls />
                                         ) : (
                                             <img src={formData.imageUrl} alt="Preview" className="w-full h-full object-cover" />
@@ -227,7 +227,7 @@ export default function DesignsManager() {
                 {designs.map((design) => (
                     <div key={design.id} className="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden group">
                         <div className="aspect-video bg-gray-800 relative overflow-hidden">
-                            {design.imageUrl.match(/\.(mp4|webm|ogg|mov)$/) || design.imageUrl.includes('video/upload') ? (
+                            {design.imageUrl?.match(/\.(mp4|webm|ogg|mov)$/) || design.imageUrl?.includes('video/upload') ? (
                                 <video src={design.imageUrl} className="w-full h-full object-cover" controls />
                             ) : (
                                 <img src={design.imageUrl} alt={design.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
