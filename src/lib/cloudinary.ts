@@ -1,5 +1,9 @@
 import { v2 as cloudinary } from 'cloudinary';
 
+if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+    console.warn("Cloudinary environment variables are missing! Uploads will fail.");
+}
+
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
@@ -18,8 +22,7 @@ export async function uploadToCloudinary(
         const uploadStream = cloudinary.uploader.upload_stream(
             {
                 folder,
-                resource_type: 'auto', // Automatically detect image or video
-                public_id: fileName.split('.')[0], // Use filename without extension
+                resource_type: 'auto',
             },
             (error, result) => {
                 if (error) {
