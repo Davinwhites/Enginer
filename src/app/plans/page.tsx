@@ -5,9 +5,14 @@ import Footer from "@/components/public/Footer";
 import PlansGrid from "@/components/public/PlansGrid";
 
 export default async function PlansPage() {
-    const plans = await prisma.plan.findMany({
-        orderBy: { createdAt: 'desc' }
-    });
+    let plans: any[] = [];
+    try {
+        plans = await prisma.plan.findMany({
+            orderBy: { createdAt: 'desc' }
+        });
+    } catch (error) {
+        console.warn("PlansPage: Failed to fetch plans", error);
+    }
 
     return (
         <div className="flex flex-col min-h-screen">

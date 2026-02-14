@@ -5,9 +5,14 @@ import Footer from "@/components/public/Footer";
 import { Download, ExternalLink, FileText } from "lucide-react";
 
 export default async function ResourcesPage() {
-    const resources = await prisma.resource.findMany({
-        orderBy: { createdAt: 'desc' }
-    });
+    let resources = [];
+    try {
+        resources = await prisma.resource.findMany({
+            orderBy: { createdAt: 'desc' }
+        });
+    } catch (error) {
+        console.warn("ResourcesPage: Failed to fetch resources", error);
+    }
 
     return (
         <div className="flex flex-col min-h-screen">

@@ -5,9 +5,14 @@ import Footer from "@/components/public/Footer";
 import { Layout, ArrowUpRight } from "lucide-react";
 
 export default async function DesignsPage() {
-    const designs = await prisma.design.findMany({
-        orderBy: { createdAt: 'desc' }
-    });
+    let designs = [];
+    try {
+        designs = await prisma.design.findMany({
+            orderBy: { createdAt: 'desc' }
+        });
+    } catch (error) {
+        console.warn("DesignsPage: Failed to fetch designs", error);
+    }
 
     return (
         <div className="flex flex-col min-h-screen">

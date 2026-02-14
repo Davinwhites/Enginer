@@ -6,7 +6,12 @@ import Link from "next/link";
 import { ArrowRight, CheckCircle, PenTool, Layout, FileCode } from "lucide-react";
 
 export default async function HomePage() {
-  const home = await prisma.homePage.findUnique({ where: { id: 1 } });
+  let home = null;
+  try {
+    home = await prisma.homePage.findUnique({ where: { id: 1 } });
+  } catch (error) {
+    console.warn("HomePage: Failed to fetch home data", error);
+  }
 
   return (
     <div className="flex flex-col min-h-screen">

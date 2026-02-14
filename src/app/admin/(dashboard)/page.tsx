@@ -10,14 +10,24 @@ import {
 } from "lucide-react";
 
 export default async function DashboardPage() {
-    const plansCount = await prisma.plan.count();
-    const designsCount = await prisma.design.count();
-    const resourcesCount = await prisma.resource.count();
-    const totalViews = await prisma.pageView.count();
-    const recentLogins = await prisma.adminLog.findMany({
-        orderBy: { timestamp: 'desc' },
-        take: 5
-    });
+    let plansCount = 0;
+    let designsCount = 0;
+    let resourcesCount = 0;
+    let totalViews = 0;
+    let recentLogins: any[] = [];
+
+    try {
+        plansCount = await prisma.plan.count();
+        designsCount = await prisma.design.count();
+        resourcesCount = await prisma.resource.count();
+        totalViews = await prisma.pageView.count();
+        recentLogins = await prisma.adminLog.findMany({
+            orderBy: { timestamp: 'desc' },
+            take: 5
+        });
+    } catch (error) {
+        console.warn("DashboardPage: Failed to fetch stats", error);
+    }
 
     const stats = [
         { label: "Drawn Plans", value: plansCount, icon: PenTool, color: "text-blue-400" },

@@ -6,7 +6,12 @@ import { User, Target, Briefcase, Award, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 export default async function AboutPage() {
-    const about = await prisma.aboutPage.findUnique({ where: { id: 1 } });
+    let about = null;
+    try {
+        about = await prisma.aboutPage.findUnique({ where: { id: 1 } });
+    } catch (error) {
+        console.warn("AboutPage: Failed to fetch about data", error);
+    }
 
     return (
         <div className="flex flex-col min-h-screen">
