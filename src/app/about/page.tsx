@@ -17,8 +17,12 @@ export default async function AboutPage() {
         <div className="flex flex-col min-h-screen">
             <Navbar />
 
-            <main className="flex-1 pt-32 pb-24">
-                <div className="max-w-7xl mx-auto px-6">
+            <main className="flex-1 pt-32 pb-24 relative overflow-hidden">
+                {/* Background Decor */}
+                <div className="absolute top-1/4 -right-20 w-80 h-80 bg-blue-600/5 blur-[100px] rounded-full pointer-events-none" />
+                <div className="absolute bottom-1/4 -left-20 w-80 h-80 bg-emerald-600/5 blur-[100px] rounded-full pointer-events-none" />
+
+                <div className="max-w-7xl mx-auto px-6 relative z-10">
                     {/* Header Section */}
                     <div className="mb-20">
                         <h1 className="text-4xl md:text-8xl font-black mb-8 leading-tight tracking-tighter">
